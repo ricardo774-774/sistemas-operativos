@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sistemas Operativos</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="./img/logo-2.png">
+</head>
+<body>
+
+    <h1 class="text-center my-5 titulo">Simular Procesamiento Por Lotes</h1>
+
+    <div id="moment" class="contador-container"> </div>
+
+    <div id="processes" class="processes">
+        Procesos Totales: <span class="total-processes"> </span> 
+        <span class="ejecution-processes"> </span>  
+        Procesos Restantes: <span class="remaining-processes"> </span> 
+    </div>
+
+    <div id="lotes" class="processes">
+        Lotes Totales: <span class="total-processes"> </span> 
+        <span class="ejecution-processes"> </span>  
+        Lotes Restantes: <span class="remaining-processes"> </span> 
+    </div>
+
+    <div class="container mt-5 p-5">
+        <h2 class="text-center mb-4 font-weight-bold">- DATOS PROCESO -</h2>
+
+        <div id="contenido" class="row">
+            <div class="col-md-4 agregar-cita">
+                <form id="quantity">
+                    <h2 class="mb-4 text-center">Cantidad</h2>
+
+                    <div class="form-group row">
+                        <div class="col-sm-12 col-lg-12">
+                            <input type="number" id="quantity" name="quantity" class="form-control" placeholder="Ingresa una catidad">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                            <button type="submit" class="btn btn-success w-100 d-block" id="button-quantity">Agregar</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-4">
+                <form id="data">
+                    <h2 class="text-center mb-4">Datos</h2>
+
+                    <h4>Lote <span id="lote"></span> </h4>
+
+                    <div class="form-group row">
+                        <div class="col-sm-12 col-lg-12">
+                            <input type="text" id="name" name="name" class="form-control" placeholder="Nombre">
+                        </div>
+                        <div class="col-sm-12 col-lg-12">
+                            <input type="number" id="number1" name="number1" class="form-control" placeholder="Numero 1">
+                        </div>
+                        <div class="col-sm-12 col-lg-12">
+                            <select class="u-full-width selector-opt" id="operation">
+                                <option value="">Operaciones</option>
+                                <option value="suma">Suma</option>
+                                <option value="resta">Resta</option>
+                                <option value="multiplicacion">Multiplicacion</option>
+                                <option value="divicion">Divicion</option>
+                                <option value="residuo">Residuo</option>
+                                <option value="potencia">Potencia</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-12 col-lg-12">
+                            <input type="number" id="number2" name="number2" class="form-control" placeholder="Numero 2">
+                        </div>
+                        <div class="col-sm-12 col-lg-12">
+                            <input type="number" id="seconds" name="seconds" class="form-control" placeholder="Tiempo en segundos">
+                        </div>
+
+                        <div class="col-sm-12 col-lg-12">
+                            <input type="number" id="identificator" name="identificator" class="form-control" placeholder="Identidicador">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                            <button type="submit" class="btn btn-success w-100 d-block" id="button-data" disabled>Agregar</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Procesos -->
+            <div class="col-md-4">
+                <h2 id="resolucion" class="mb-4 text-center">Resolución</h2>
+                <div id="resultado" class="form-group row resultados">
+                    <!-- Aquí se imprimirán los resultados de los datos -->
+                    <h4>Proceso <span id="process"></span> </h4>
+                    <div class="col-sm-12 col-lg-12">Id: <span id="id-span"></span></div>
+                    <div class="col-sm-12 col-lg-12">Nombre: <span id="name-span"></span></div>
+                    <div class="col-sm-12 col-lg-12">Numero 1: <span id="num1-span"></span></div>
+                    <div class="col-sm-12 col-lg-12">Numero 2: <span id="num2-span"></span></div>
+                    <div class="col-sm-12 col-lg-12">Operacion: <span id="opr-span"></span></div>
+                    <div class="col-sm-12 col-lg-12">Resultado: <span id="res-span"></span></div>
+                    <div class="col-sm-12 col-lg-12">Tiempo de espera: <span id="tim-span"></span></div>
+                </div>
+            </div>
+        </div> <!--.row-->
+    </div><!--.container-->
+
+    <script src="js/app.js" type="module"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+
+</body>
+</html>
