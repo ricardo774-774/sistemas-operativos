@@ -23,23 +23,27 @@ let dataFormButton = document.getElementById('button-data');
 let loteSpan = document.getElementById('lote');
 
 // Spans de Resolución 
-let idSpan = document.getElementById('id-span');
-let nameSpan = document.getElementById('name-span');
-let num1Span = document.getElementById('num1-span');
-let num2Span = document.getElementById('num2-span');
-let oprSpan = document.getElementById('opr-span');
-let resSpan = document.getElementById('res-span');
-let timSpan = document.getElementById('tim-span');
+// let divResult = document.getElementById('resultado');
+// let idSpan = document.getElementById('id-span');
+// let nameSpan = document.getElementById('name-span');
+// let num1Span = document.getElementById('num1-span');
+// let num2Span = document.getElementById('num2-span');
+// let oprSpan = document.getElementById('opr-span');
+// let resSpan = document.getElementById('res-span');
+// let timSpan = document.getElementById('tim-span');
 let currentProcessSpan = document.getElementById('process');
+let divResolucion = document.getElementById('resolucion');
 
 let loteNumber = 0;     // Movernos entre los lotes
 let proccesNumber = 0;  // Movernos entre los procesos
 let totalNumberLotes;   // Numero total de lotes
 let totalProcesses;     // Total de procesos
+let totalProcessesHelper;     // Total de procesos
 let totalLotes = [];    // Contenedor de lotes
 let lote = [];          // Lote
 let restantes;          // Procesos que no llenaron un lote
 let currentProcess = 0;
+let currentLote = 0;
 
 // **************** Events ****************
 
@@ -54,6 +58,7 @@ quantityForm.addEventListener('submit', function(e) {
 
     // Consigue total de procesos
     totalProcesses = e.target.quantity.value;
+    totalProcessesHelper = totalProcesses;
 
     // Show process 
     showTotalProcess(totalProcesses);
@@ -177,135 +182,172 @@ const readFormData = (data) => {
         // Empezamos a ejecutar procesos;
         resolveProcess();
     }
+
 }
 
 const resolveProcess = async () => {
-    if(totalLotes.length){
-        
-        for (const lote of totalLotes) {
+    for (const lote of totalLotes) {
+
             
-            for (let i = 0; i < lote.length; i++) {
-                console.log(lote.length - 1);
-                let result;
-        
-                // Procesos restantes
-                remainingProcessesSapn.textContent = Number(remainingProcessesSapn.textContent) - 1 ;
-        
-                // Proceso actual
-                currentProcess = currentProcess + 1
-                currentProcessSpan.textContent = currentProcess;
-        
-                switch (lote[i].operation) {
-                    case 'suma':
-                        result = Number(lote[i].number1) + Number(lote[i].number2);
-                        break;
-        
-                    case 'resta':
-                        result = Number(lote[i].number1) - Number(lote[i].number2);
-                        break;
-        
-                    case 'multiplicacion':
-                        result = Number(lote[i].number1) * Number(lote[i].number2);
-                        break;
-        
-                    case 'divicion':
-                        result = Number(lote[i].number1) / Number(lote[i].number2);
-                        break;
-        
-                    case 'residuo':
-                        result = Number(lote[i].number1) % Number(lote[i].number2);
-                        break;
-        
-                    case 'potencia':
-                        result =  Math.pow(Number(lote[i].number1), Number(lote[i].number2));
-                        break;
-                }
-        
-                await new Promise(resolve => {
-                    setTimeout(() => {
-                        idSpan.textContent = lote[i].identificator;
-                        nameSpan.textContent = lote[i].name;
-                        num1Span.textContent = lote[i].number1;
-                        num2Span.textContent = lote[i].number2;
-                        oprSpan.textContent = lote[i].operation;
-                        timSpan.textContent = lote[i].seconds;
-                        resSpan.textContent = result;
+        for (let i = 0; i < lote.length; i++) {
+            let result;
+            // Proceso actual
+            currentProcess = currentProcess + 1
+    
+            switch (lote[i].operation) {
+                case 'suma':
+                    result = Number(lote[i].number1) + Number(lote[i].number2);
+                    break;
+    
+                case 'resta':
+                    result = Number(lote[i].number1) - Number(lote[i].number2);
+                    break;
+    
+                case 'multiplicacion':
+                    result = Number(lote[i].number1) * Number(lote[i].number2);
+                    break;
+    
+                case 'divicion':
+                    result = Number(lote[i].number1) / Number(lote[i].number2);
+                    break;
+    
+                case 'residuo':
+                    result = Number(lote[i].number1) % Number(lote[i].number2);
+                    break;
+    
+                case 'potencia':
+                    result =  Math.pow(Number(lote[i].number1), Number(lote[i].number2));
+                    break;
+            }
+    
+            await new Promise(resolve => {
+                setTimeout(() => {
+                    // Lote
+                    const newLoteH4 = document.createElement('h4');
+                    newLoteH4.classList.add('col-sm-12', 'col-lg-12');
+                    newLoteH4.textContent = 'Lote ' + currentLote;
 
-                        resolve();
-                    }, Number(lote[i].seconds) * 1000);
-                });
+                    // Proceso
+                    const newProcessH4 = document.createElement('h4');
+                    newProcessH4.classList.add('col-sm-12', 'col-lg-12');
+                    newProcessH4.textContent = 'Proceso ' + currentProcess;
 
-                if (i === 3) {
-                    remainingLotesSpan.textContent = Number(remainingLotesSpan.textContent) - 1;
-                }
+                    // Id
+                    const newDivId = document.createElement('div');
+                    newDivId.classList.add('col-sm-12', 'col-lg-12');
+                    newDivId.textContent = "Id: " + lote[i].identificator;
 
-                if (Number(remainingProcessesSapn.textContent) - 1 == 0 ) {
-                    remainingLotesSpan.textContent = 0;
-                }
+                    // Name
+                    const newDivName = document.createElement('div');
+                    newDivName.classList.add('col-sm-12', 'col-lg-12');
+                    newDivName.textContent = "Name: " + lote[i].name;
+
+                    // Num1
+                    const newDivNum1 = document.createElement('div');
+                    newDivNum1.classList.add('col-sm-12', 'col-lg-12');
+                    newDivNum1.textContent = "Numero 1: " + lote[i].number1;
+
+                    // Num2
+                    const newDivNum2 = document.createElement('div');
+                    newDivNum2.classList.add('col-sm-12', 'col-lg-12');
+                    newDivNum2.textContent = "Numero 2: " + lote[i].number2;
+
+                    // Operation
+                    const newOperation = document.createElement('div');
+                    newOperation.classList.add('col-sm-12', 'col-lg-12');
+                    newOperation.textContent = "Operacion: " + lote[i].operation;
+
+                    // Seconds
+                    const newSeconds = document.createElement('div');
+                    newSeconds.classList.add('col-sm-12', 'col-lg-12');
+                    newSeconds.textContent = "Tiempo de espera: " + lote[i].seconds;
+
+                    // Result 
+                    const newResult =  document.createElement('div');
+                    newResult.classList.add('col-sm-12', 'col-lg-12');
+                    newResult.textContent = "Resultado: " + result;
+
+                    // Container
+                    const newProcessDiv = document.createElement('div');
+                    newProcessDiv.classList.add('form-group', 'row', 'resultados');
+                    newProcessDiv.appendChild(newLoteH4);
+                    newProcessDiv.appendChild(newProcessH4);
+                    newProcessDiv.appendChild(newDivId);
+                    newProcessDiv.appendChild(newDivNum1);
+                    newProcessDiv.appendChild(newDivNum2);
+                    newProcessDiv.appendChild(newOperation);
+                    newProcessDiv.appendChild(newSeconds);
+                    newProcessDiv.appendChild(newResult);
+
+                    // Divisor visual
+                    const hr = document.createElement('hr');
+
+                    divResolucion.insertAdjacentElement('afterend', newProcessDiv);
+                    divResolucion.insertAdjacentElement('afterend', hr);
+
+                    resolve();
+                }, Number(lote[i].seconds) * 1000);
+            });
+
+            // Procesos restantes - 1
+            remainingProcessesSapn.textContent = Number(remainingProcessesSapn.textContent) - 1 ;
+
+            // Nuevo lote?
+            if (i === 3) {
+                // Restamos del contador de lotes
+                remainingLotesSpan.textContent = Number(remainingLotesSpan.textContent) - 1;
+
+                // Añadimos sumamos un lote al lote actual
+                currentLote = currentLote + 1;
+            }
+
+            if (Number(remainingProcessesSapn.textContent) - 1 == 0 ) {
+                remainingLotesSpan.textContent = 0;
             }
         }
-
-    } else {
-        // Solo generó un lote
-        executeOperations();
     }
+
 }
 
-async function executeOperations() {
-    for (let i = 0; i < lote.length; i++) {
-        let result;
+// const resolveOperation = (operation, num1, num2) => {
+//     let result;
 
-        // Procesos restantes
-        remainingProcessesSapn.textContent = lote.length - i;
+//     console.log(typeof(num1));
+//     console.log(typeof(num2));
+//     console.log(num1);
+//     console.log(num2);
 
-        // Proceso actual
-        currentProcessSpan.textContent = i + 1;
+//     num1 = Number(num1);
+//     num2 = Number(num2);
 
-        switch (lote[i].operation) {
-            case 'suma':
-                result = Number(lote[i].number1) + Number(lote[i].number2);
-                break;
+//     switch (operation) {
+//         case 'suma':
+//             result = num1 + num2;
+//             break;
 
-            case 'resta':
-                result = Number(lote[i].number1) - Number(lote[i].number2);
-                break;
+//         case 'resta':
+//             result = num1 - num2;
+//             break;
 
-            case 'multiplicacion':
-                result = Number(lote[i].number1) * Number(lote[i].number2);
-                break;
+//         case 'multiplicacion':
+//             result = num1 * num2;
+//             break;
 
-            case 'divicion':
-                result = Number(lote[i].number1) / Number(lote[i].number2);
-                break;
+//         case 'divicion':
+//             result = num1 / num2;
+//             break;
 
-            case 'residuo':
-                result = Number(lote[i].number1) % Number(lote[i].number2);
-                break;
+//         case 'residuo':
+//             result = num1 % num2;
+//             break;
 
-            case 'potencia':
-                result =  Math.pow(Number(lote[i].number1), Number(lote[i].number2));
-                break;
-        }
+//         case 'potencia':
+//             result =  Math.pow(num1, num2);
+//             break;
+//     }
 
-        await new Promise(resolve => {
-            setTimeout(() => {
-                idSpan.textContent = lote[i].identificator;
-                nameSpan.textContent = lote[i].name;
-                num1Span.textContent = lote[i].number1;
-                num2Span.textContent = lote[i].number2;
-                oprSpan.textContent = lote[i].operation;
-                timSpan.textContent = lote[i].seconds;
-                resSpan.textContent = result;
-                resolve();
-            }, Number(lote[i].seconds) * 1000);
-        });
-    }
-    
-    // Procesos en 0
-    remainingProcessesSapn.textContent = 0;
-    // Lotes en 0
-    remainingLotesSpan.textContent = 0;
-}
+//     return result;
+// }
 
 // Actualizar Contador Tiempo
 const updateCounter = () => {
