@@ -1,6 +1,7 @@
 html {
   min-height: 100%;
 }
+
 body {
   margin: 0;
   padding: 0;
@@ -9,52 +10,21 @@ body {
   min-height: 100%;
   padding-bottom: 5rem;
 }
+
 .titulo {
   font-weight: bold;
   font-size: 3rem;
   text-transform: uppercase;
   color: white;
 }
+
 .container {
     background-color: rgba(255, 255, 255, 0.571);
 }
-header {
-  margin-top: 3rem;
-}
-header h1 {
-  color: white;
-}
-.lista-citas .cita {
-  border-bottom: 1px solid #e1e1e1;
-  padding: 2rem;
-  padding-bottom: 3rem;
-  
-}
-.lista-citas .cita:last-of-type {
-  border-bottom: 0;
-}
-
-.lista-citas .cita p {
-  margin:0;
-}
-.lista-citas .cita button {
-  margin-top: 1rem!important;
-}
-.lista-citas .cita span {
-  font-weight: bold;
-}
-textarea {
-    height: 200px!important;
-}
-
-svg {
-  width: 21px;
-}
-
 
 .contador-container {
   text-align: center;
-  font-size: 30px;
+  font-size: 50px;
   color: white;
   margin-bottom: 20px;
 }
@@ -65,24 +35,29 @@ svg {
   color: rgb(0, 0, 0);
 }
 
-.total-processes{
+.lotes{
+  text-align: center;
+  font-size: 30px;
+  color: rgb(0, 0, 0);
+}
+
+.total{
   margin-right: 100px;
   font-weight: bold;
   color: #30cb35;
 }
 
-.ejecution-processes{
-  margin-right: 30px;
+.ejecution{
+  margin-right: 100px;
   font-weight: bold;
-  color: #ddbc00;
+  color: #003fdd;
 }
 
-.remaining-processes{
-  margin-right: 30px;
+.remaining{
+  margin-right: 100px;
   font-weight: bold;
   color: #dd0000;
 }
-
 
 .selector-opt{
   height: 40px;
