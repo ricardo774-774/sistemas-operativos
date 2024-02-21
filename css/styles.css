@@ -76,3 +76,11 @@ body {
   text-align: center;
   padding: 2px;
 }
+
+.current-process{
+  font-size: 20px;
+}
+
+.contador{
+  background-color: #000000;
+}

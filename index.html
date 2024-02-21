@@ -13,7 +13,7 @@
 
     <h1 class="text-center my-5 titulo">Simular Procesamiento Por Lotes</h1>
 
-    <div id="moment" class="contador-container"> </div>
+    <h1 id="contador" class="contador-container">0</h1>
 
     <div id="processes" class="processes">
         Procesos Totales: <span class="total"> </span> 
@@ -27,10 +27,55 @@
         Lote Actual: <span class="ejecution"> </span>  
     </div>
 
-    <div class="container mt-5 p-5">
-        <h2 class="text-center mb-4 font-weight-bold">- DATOS PROCESO -</h2>
+    <div class="container mt-5 p-5" id="main-container">
 
-        <div id="contenido" class="row">
+        <h2 id="title-1" class="text-center mb-12 font-weight-bold" >- LOTE EN EJECUCION -</h2>
+        <div id="contenido-1" class="row">
+            <!-- Procesos -->
+            <div class="col-md-3 text-center">
+                <h4>Proceso</h4>
+                <p>Id: <span></span></p>
+                <p>T-Maximo: <span></span></p>
+                <p>Operacion: <span></span></p>
+            </div>
+
+            <div class="col-md-3 text-center">
+                <h4>Proceso</h4>
+                <p>Id: <span></span></p>
+                <p>T-Maximo: <span></span></p>
+                <p>Operacion: <span></span></p>
+            </div>
+
+            <div class="col-md-3 text-center">
+                <h4>Proceso</h4>
+                <p>Id: <span></span></p>
+                <p>T-Maximo: <span></span></p>
+                <p>Operacion: <span></span></p>
+            </div>
+
+            <div class="col-md-3 text-center">
+                <h4>Proceso</h4>
+                <p>Id: <span></span></p>
+                <p>T-Maximo: <span></span></p>
+                <p>Operacion: <span></span></p>
+            </div>
+        </div> <!--.row-->
+
+        <h2 id="title-2" class="text-center mb-12 font-weight-bold" style="display: none;">- PROCESO EN EJECUCION -</h2>
+        <div id="contenido-2" class="row" style="display: none;">
+            <!-- Procesos -->
+            <div class="col-md-12 text-center current-process">
+                <p class="process-execution name">Nombre: <span></span></p>
+                <p class="process-execution n1">Numero 1: <span></span></p>
+                <p class="process-execution n2">Numero 2: <span></span></p>
+                <p class="process-execution opt">Operacion: <span></span></p>
+                <p class="process-execution tm ">T-Maximo: <span></span></p>
+                <p class="process-execution tt">T-Transcurrido: <span></span></p>
+            </div>
+        </div> <!--.row-->
+
+        <h2 id="title-3" class="text-center mb-12 font-weight-bold">- DATOS DEL PROCESO -</h2>
+        <div id="contenido-3" class="row">
             <div class="col-md-4 agregar-cita">
                 <form id="quantity">
                     <h2 class="mb-4 text-center">Cantidad</h2>
@@ -91,13 +136,13 @@
 
             <!-- Procesos -->
             <div class="col-md-4">
-                <h2 id="resolucion" class="mb-4 text-center">Resolución</h2>
+                <h2 id="resolucion" class="mb-4 text-center">Resueltos</h2>
             </div>
         </div> <!--.row-->
+
     </div><!--.container-->
 
     <script src="js/app.js" type="module"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
 
 </body>
 </html>
