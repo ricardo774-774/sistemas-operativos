@@ -13,18 +13,18 @@
 
     <h1 class="text-center my-5 titulo">Simular Procesamiento Por Lotes</h1>
 
-    <div id="moment" class="contador-container"> </div>
+    <div id="moment" class="contador-container"></div>
 
     <div id="processes" class="processes">
-        Procesos Totales: <span class="total-processes"> </span> 
-        <span class="ejecution-processes"> </span>  
-        Procesos Restantes: <span class="remaining-processes"> </span> 
+        Procesos Totales: <span id="total-processes-processes"></span> 
+        <span class="ejecution-processes-processes"></span>  
+        Procesos Restantes: <span id="remaining-processes-processes"></span> 
     </div>
 
     <div id="lotes" class="processes">
-        Lotes Totales: <span class="total-processes"> </span> 
-        <span class="ejecution-processes"> </span>  
-        Lotes Restantes: <span class="remaining-processes"> </span> 
+        Lotes Totales: <span id="total-processes-lotes"></span> 
+        <span class="ejecution-processes-lotes"></span>  
+        Lotes Restantes: <span id="remaining-processes-lotes"></span> 
     </div>
 
     <div class="container mt-5 p-5">
@@ -32,12 +32,12 @@
 
         <div id="contenido" class="row">
             <div class="col-md-4 agregar-cita">
-                <form id="quantity">
+                <form id="quantity-form">
                     <h2 class="mb-4 text-center">Cantidad</h2>
 
                     <div class="form-group row">
                         <div class="col-sm-12 col-lg-12">
-                            <input type="number" id="quantity" name="quantity" class="form-control" placeholder="Ingresa una catidad">
+                            <input type="number" id="quantity" name="quantity" class="form-control" placeholder="Ingresa una cantidad">
                         </div>
                     </div>
 
@@ -79,7 +79,7 @@
                         </div>
 
                         <div class="col-sm-12 col-lg-12">
-                            <input type="number" id="identificator" name="identificator" class="form-control" placeholder="Identidicador">
+                            <input type="number" id="identificator" name="identificator" class="form-control" placeholder="Identificador">
                         </div>
                     </div>
 
