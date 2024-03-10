@@ -13,31 +13,76 @@
 
     <h1 class="text-center my-5 titulo">Simular Procesamiento Por Lotes</h1>
 
-    <div id="moment" class="contador-container"></div>
+    <h1 id="contador" class="contador-container">0</h1>
 
     <div id="processes" class="processes">
-        Procesos Totales: <span id="total-processes-processes"></span> 
-        <span class="ejecution-processes-processes"></span>  
-        Procesos Restantes: <span id="remaining-processes-processes"></span> 
+        Procesos Totales: <span class="total"> </span> 
+        Procesos Restantes: <span class="remaining"> </span> 
+        Proceso Actual: <span class="ejecution"> </span>  
     </div>
 
-    <div id="lotes" class="processes">
-        Lotes Totales: <span id="total-processes-lotes"></span> 
-        <span class="ejecution-processes-lotes"></span>  
-        Lotes Restantes: <span id="remaining-processes-lotes"></span> 
+    <div id="lotes" class="lotes">
+        Lotes Totales: <span class="total"> </span> 
+        Lotes Restantes: <span class="remaining"> </span> 
+        Lote Actual: <span class="ejecution"> </span>  
     </div>
 
-    <div class="container mt-5 p-5">
-        <h2 class="text-center mb-4 font-weight-bold">- DATOS PROCESO -</h2>
+    <div class="container mt-5 p-5" id="main-container">
 
-        <div id="contenido" class="row">
+        <h2 id="title-1" class="text-center mb-12 font-weight-bold" >- LOTE EN EJECUCION -</h2>
+        <div id="contenido-1" class="row">
+            <!-- Procesos -->
+            <div class="col-md-3 text-center">
+                <h4>Proceso</h4>
+                <p>Id: <span></span></p>
+                <p>T-Maximo: <span></span></p>
+                <p>Operacion: <span></span></p>
+            </div>
+
+            <div class="col-md-3 text-center">
+                <h4>Proceso</h4>
+                <p>Id: <span></span></p>
+                <p>T-Maximo: <span></span></p>
+                <p>Operacion: <span></span></p>
+            </div>
+
+            <div class="col-md-3 text-center">
+                <h4>Proceso</h4>
+                <p>Id: <span></span></p>
+                <p>T-Maximo: <span></span></p>
+                <p>Operacion: <span></span></p>
+            </div>
+
+            <div class="col-md-3 text-center">
+                <h4>Proceso</h4>
+                <p>Id: <span></span></p>
+                <p>T-Maximo: <span></span></p>
+                <p>Operacion: <span></span></p>
+            </div>
+        </div> <!--.row-->
+
+        <h2 id="title-2" class="text-center mb-12 font-weight-bold" style="display: none;">- PROCESO EN EJECUCION -</h2>
+        <div id="contenido-2" class="row" style="display: none;">
+            <!-- Procesos -->
+            <div class="col-md-12 text-center current-process">
+                <p class="process-execution name">Nombre: <span></span></p>
+                <p class="process-execution n1">Numero 1: <span></span></p>
+                <p class="process-execution n2">Numero 2: <span></span></p>
+                <p class="process-execution opt">Operacion: <span></span></p>
+                <p class="process-execution tm ">T-Maximo: <span></span></p>
+                <p class="process-execution tt">T-Transcurrido: <span></span></p>
+            </div>
+        </div> <!--.row-->
+
+        <h2 id="title-3" class="text-center mb-12 font-weight-bold">- DATOS DEL PROCESO -</h2>
+        <div id="contenido-3" class="row">
             <div class="col-md-4 agregar-cita">
-                <form id="quantity-form">
+                <form id="quantity">
                     <h2 class="mb-4 text-center">Cantidad</h2>
 
                     <div class="form-group row">
                         <div class="col-sm-12 col-lg-12">
-                            <input type="number" id="quantity" name="quantity" class="form-control" placeholder="Ingresa una cantidad">
+                            <input type="number" id="quantity" name="quantity" class="form-control" placeholder="Ingresa una catidad">
                         </div>
                     </div>
 
@@ -79,7 +124,7 @@
                         </div>
 
                         <div class="col-sm-12 col-lg-12">
-                            <input type="number" id="identificator" name="identificator" class="form-control" placeholder="Identificador">
+                            <input type="number" id="identificator" name="identificator" class="form-control" placeholder="Identidicador">
                         </div>
                     </div>
 
@@ -91,24 +136,17 @@
 
             <!-- Procesos -->
             <div class="col-md-4">
-                <h2 id="resolucion" class="mb-4 text-center">Resolución</h2>
-                <div id="resultado" class="form-group row resultados">
-                    <!-- Aquí se imprimirán los resultados de los datos -->
-                    <h4>Proceso <span id="process"></span> </h4>
-                    <div class="col-sm-12 col-lg-12">Id: <span id="id-span"></span></div>
-                    <div class="col-sm-12 col-lg-12">Nombre: <span id="name-span"></span></div>
-                    <div class="col-sm-12 col-lg-12">Numero 1: <span id="num1-span"></span></div>
-                    <div class="col-sm-12 col-lg-12">Numero 2: <span id="num2-span"></span></div>
-                    <div class="col-sm-12 col-lg-12">Operacion: <span id="opr-span"></span></div>
-                    <div class="col-sm-12 col-lg-12">Resultado: <span id="res-span"></span></div>
-                    <div class="col-sm-12 col-lg-12">Tiempo de espera: <span id="tim-span"></span></div>
-                </div>
+                <h2 id="resolucion" class="mb-4 text-center">Resueltos</h2>
+                <div id="resultado-procesos" class="resultado-procesos"></div>
+                <script>
+                    updateCurrentInExecution();
+                </script>
             </div>
         </div> <!--.row-->
+
     </div><!--.container-->
 
     <script src="js/app.js" type="module"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
 
 </body>
 </html>
