@@ -1,20 +1,30 @@
-// **************** Selectors ****************
+// **************** Selectors ****************+
 
-// Moment
-let clock = document.getElementById('moment');  
+// Obtener el elemento del contador
+var contadorElemento = document.getElementById('contador');
+
+// Obtener los elementos p por su clase
+const nameSpan = document.querySelector('.process-execution.name span');
+const n1Span = document.querySelector('.process-execution.n1 span');
+const n2Span = document.querySelector('.process-execution.n2 span');
+const optSpan = document.querySelector('.process-execution.opt span');
+const tmSpan = document.querySelector('.process-execution.tm span');
+const ttSpan = document.querySelector('.process-execution.tt span');
 
 // Processes 
-let queuedProcessDiv = document.getElementById('processes'); 
-let totalProcessesSpan = queuedProcessDiv.getElementsByClassName('total-processes')[0];
-let remainingProcessesSapn = queuedProcessDiv.getElementsByClassName('remaining-processes')[0];
+let queuedProcessDiv = document.getElementById('processes');
+let totalProcessesSpan = queuedProcessDiv.getElementsByClassName('total')[0];
+let remainingProcessesSapn = queuedProcessDiv.getElementsByClassName('remaining')[0];
+let currentProcessesSpan = queuedProcessDiv.getElementsByClassName('ejecution')[0];
 
 // Lotes
-let queuedLotesDiv = document.getElementById('lotes'); 
-let totalLotesSpan = queuedLotesDiv.getElementsByClassName('total-processes')[0];
-let remainingLotesSpan = queuedLotesDiv.getElementsByClassName('remaining-processes')[0];
+let queuedLotesDiv = document.getElementById('lotes');
+let totalLotesSpan = queuedLotesDiv.getElementsByClassName('total')[0];
+let remainingLotesSpan = queuedLotesDiv.getElementsByClassName('remaining')[0];
+let currentLoteSpan = queuedLotesDiv.getElementsByClassName('ejecution')[0];
 
 // Form cantidad
-let quantityForm = document.getElementById('quantity');   
+let quantityForm = document.getElementById('quantity');
 let quantityFormButton = document.getElementById('button-quantity');
 
 // Form datos
@@ -23,40 +33,157 @@ let dataFormButton = document.getElementById('button-data');
 let loteSpan = document.getElementById('lote');
 
 // Spans de Resolución 
-let idSpan = document.getElementById('id-span');
-let nameSpan = document.getElementById('name-span');
-let num1Span = document.getElementById('num1-span');
-let num2Span = document.getElementById('num2-span');
-let oprSpan = document.getElementById('opr-span');
-let resSpan = document.getElementById('res-span');
-let timSpan = document.getElementById('tim-span');
 let currentProcessSpan = document.getElementById('process');
+let divResolucion = document.getElementById('resolucion');
+
+// Spans de Lote en ejecucion
+const contenedor = document.getElementById('contenido-1');
+const spans = contenedor.querySelectorAll('span');
+const primerSpanProceso1 = spans[0];
+const segundoSpanProceso1 = spans[1];
+const tercerSpanProceso1 = spans[2];
+const primerSpanProceso2 = spans[3];
+const segundoSpanProceso2 = spans[4];
+const tercerSpanProceso2 = spans[5];
+const primerSpanProceso3 = spans[6];
+const segundoSpanProceso3 = spans[7];
+const tercerSpanProceso3 = spans[8];
+const primerSpanProceso4 = spans[9];
+const segundoSpanProceso4 = spans[10];
+const tercerSpanProceso4 = spans[11];
 
 let loteNumber = 0;     // Movernos entre los lotes
 let proccesNumber = 0;  // Movernos entre los procesos
 let totalNumberLotes;   // Numero total de lotes
 let totalProcesses;     // Total de procesos
+let totalProcessesHelper;     // Total de procesos
 let totalLotes = [];    // Contenedor de lotes
 let lote = [];          // Lote
 let restantes;          // Procesos que no llenaron un lote
 let currentProcess = 0;
+let currentLote = 0;
+
+// Inicializar contadores contador
+let generalCounter = 0;
+let processCounter = 0;
 
 // **************** Events ****************
 
+// Función para interrumpir el proceso actual por entrada/salida
+// Función para interrumpir el proceso actual por entrada/salida
+function interruptProcess() {
+    // Detener el contador de tiempo para el proceso actual
+    clearInterval(intervalId);
+    
+    // Si hay un mensaje de error en pantalla, quitarlo
+    removeErrorMessage();
+    
+    // Mover el proceso actual a la cola de procesos del lote en ejecución actual
+    // Agregar el proceso actual al final del lote actual
+    totalLotes[currentLote].push(totalLotes[currentLote].shift());
+    
+    // Actualizar la interfaz de usuario
+    lotesInExecution(totalLotes[currentLote]);
+}
+
+// Función para quitar el mensaje de error de la pantalla
+function removeErrorMessage() {
+    // Aquí debes implementar la lógica para quitar el mensaje de error de la pantalla
+    // Por ejemplo, puedes seleccionar el elemento HTML que muestra el mensaje de error y ocultarlo o eliminarlo
+}
+
+// Agregar evento para detectar teclas
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'i' || event.key === 'I') {
+        // Interrupción por entrada/salida
+        interruptProcess();
+    } else if (event.key === 'e' || event.key === 'E') {
+        // Terminación por error
+        terminateProcess();
+    } else if (event.key === 'p' || event.key === 'P') {
+        // Pausa del programa
+        pauseProgram();
+    } else if (event.key === 'c' || event.key === 'C') {
+        // Continuar el programa pausado
+        continueProgram();
+    }
+});
+
+
+// Función para terminar el proceso actual por error
+function terminateProcess() {
+    // Detener el contador de tiempo para el proceso actual
+    clearInterval(intervalId);
+    
+    // Obtener el proceso actual
+    const currentProcessData = totalLotes[currentLote][0];
+    
+    // Mostrar un mensaje de error en lugar del resultado
+    const errorResult = "ERROR";
+    // Actualizar la interfaz de usuario con el mensaje de error
+    updateCurrentInExecution(currentProcessData.name, currentProcessData.number1, currentProcessData.number2, currentProcessData.operation, currentProcessData.seconds, errorResult);
+    
+    // Continuar con el siguiente proceso
+    proceedToNextProcess();
+}
+
+// Función para continuar con el siguiente proceso después de un error
+function proceedToNextProcess() {
+    // Mover el proceso actual a la cola de procesos del lote en ejecución actual
+    // Agregar el proceso actual al final del lote actual
+    totalLotes[currentLote].push(totalLotes[currentLote].shift());
+    
+    // Actualizar la interfaz de usuario
+    lotesInExecution(totalLotes[currentLote]);
+}
+
+
+
+// Función para pausar el programa
+function pauseProgram() {
+    // Detener el contador general (reloj)
+    clearInterval(intervalId);
+}
+
+// Función para continuar el programa pausado
+function continueProgram() {
+    // Reanudar el contador general (reloj)
+    intervalId = setInterval(incrementarContador, 1000);
+}
+
+// Agregar evento para detectar teclas
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'i' || event.key === 'I') {
+        // Interrupción por entrada/salida
+        interruptProcess();
+    } else if (event.key === 'e' || event.key === 'E') {
+        // Terminación por error
+        terminateProcess();
+    } else if (event.key === 'p' || event.key === 'P') {
+        // Pausa del programa
+        pauseProgram();
+    } else if (event.key === 'c' || event.key === 'C') {
+        // Continuar el programa pausado
+        continueProgram();
+    }
+});
+
+
 // Actualizar cada segundo
 document.addEventListener('DOMContentLoaded', function () {
-    setInterval(updateCounter, 1000);  // Actualizar cada segundo
+    setInterval(incrementarContador, 1000);
 });
 
 // Submit form Cantidad
-quantityForm.addEventListener('submit', function(e) {
+quantityForm.addEventListener('submit', function (e) {
     e.preventDefault();
 
     // Consigue total de procesos
     totalProcesses = e.target.quantity.value;
+    totalProcessesHelper = totalProcesses;
 
     // Show process 
-    showTotalProcess(totalProcesses);
+    totalProcessesSpan.textContent = totalProcesses;
 
     // Block submiter
     quantityFormButton.setAttribute("disabled", "true");
@@ -73,7 +200,7 @@ quantityForm.addEventListener('submit', function(e) {
     }
 
     // Mostramos lotes totales
-    totalLotesSpan.textContent  = totalNumberLotes;
+    totalLotesSpan.textContent = totalNumberLotes;
 
     // Mostramos lote 1 en datos
     loteSpan.textContent = loteNumber + 1;
@@ -83,53 +210,33 @@ quantityForm.addEventListener('submit', function(e) {
 
     // Mostramos procesos restantes
     remainingProcessesSapn.textContent = totalProcesses;
+
+    // Mostramos lote actual
+    currentLoteSpan.textContent = 1;
 });
-// Actualizar submit form Datos para utilizar datos generados internamente
-dataForm.addEventListener('submit', function(e) {
+
+// Submit form Datos
+dataForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    const processData = generateProcessData();
-    readFormData(processData); // Pasar datos generados internamente a la función readFormData
+
+    // Read data
+    readFormData(e);
+
+    // Clean form
     dataForm.reset();
 });
 
-// **************** Functions ****************
 
+// **************** Funtions ****************
+
+// Guardamos los datos el lotes y contenedor de lotes 
 const readFormData = (data) => {
-    // Validar id único por lote
-    if (lote.length) {
-        lote.forEach((element) => {
-            if (data.target.identificator.value === element.identificator) {
-                const error = document.createElement('p');
-                error.textContent = `Id ${element.identificator} ya fue utilizado`;
-                error.classList.add('error-validation');
-                loteSpan.appendChild(error);
-                setTimeout(() => {
-                    error.remove();
-                }, 3000);
-                throw new Error('Id repetido');
-            }
-        });
-    }
 
-    // Validar id único por contenedor de lotes
-    if (totalLotes.length) {
-        totalLotes.forEach((loteElement) => {
-            loteElement.forEach((procesoElement) => {
-                if (data.target.identificator.value === procesoElement.identificator) {
-                    const error = document.createElement('p');
-                    error.textContent = `El ID ${procesoElement.identificator} ya fue utilizado en otro lote`;
-                    error.classList.add('error-validation');
-                    loteSpan.appendChild(error);
-                    setTimeout(() => {
-                        error.remove();
-                    }, 3000);
-                    throw new Error('ID repetido en totalLotes');
-                }
-            });
-        });
-    }
+    validatorId(data);
 
-    // Asignamos datos del proceso al lote x
+    // Mostramos datos 
+
+    // Aisgnamos datos del proceso al lote x
     lote[proccesNumber] = {
         name: data.target.name.value,
         number1: data.target.number1.value,
@@ -137,15 +244,14 @@ const readFormData = (data) => {
         number2: data.target.number2.value,
         seconds: data.target.seconds.value,
         identificator: data.target.identificator.value,
-    };
-
-    // Movemos dentro del lote x
+    }
+    // Nos movemos dentro del lote x
     proccesNumber = proccesNumber + 1;
 
     // Quitamos un proceso
     totalProcesses = totalProcesses - 1;
 
-    // Asignamos datos del proceso al lote
+    // Aisgnamos datos del proceso al lote 
     if (proccesNumber > 3) {
         // Reiciamos proceso para volver a movernos dentro de otro lote
         proccesNumber = 0;
@@ -168,147 +274,274 @@ const readFormData = (data) => {
         // Bloqueamos boton para enviar datos;
         dataFormButton.setAttribute("disabled", "true");
 
+        // document.getElementById('title-1').style.display = 'block';
+        // document.getElementById('contenido-1').style.display = 'block';
+        document.getElementById('title-2').style.display = 'block';
+        document.getElementById('contenido-2').style.display = 'block';
+
         // Empezamos a ejecutar procesos;
         resolveProcess();
+
+        // Mostramos lotes en ejecucion
+        lotesInExecution(totalLotes[0]);
     }
-};
 
-// Generar datos de proceso internamente
-const generateProcessData = () => {
-    const id = proccesNumber + 1; // ID único (puede ser consecutivo)
-    const maxTime = Math.floor(Math.random() * (18 - 7 + 1)) + 7; // Tiempo máximo estimado entre 7 y 18 segundos
-    const operations = ['suma', 'resta', 'multiplicacion', 'divicion', 'residuo', 'potencia'];
-    const operation = operations[Math.floor(Math.random() * operations.length)]; // Seleccionar operación aleatoria
-    return { id, maxTime, operation };
-};
+}
 
-const resolveProcess = async () => {
-    if (totalLotes.length) {
-        for (const lote of totalLotes) {
-            for (let i = 0; i < lote.length; i++) {
-                let result;
-
-                // Actualizar procesos restantes
-                remainingProcessesSapn.textContent = Number(remainingProcessesSapn.textContent) - 1;
-
-                // Actualizar proceso actual
-                currentProcess = currentProcess + 1;
-                currentProcessSpan.textContent = currentProcess;
-
-                switch (lote[i].operation) {
-                    case 'suma':
-                        result = Number(lote[i].number1) + Number(lote[i].number2);
-                        break;
-                    case 'resta':
-                        result = Number(lote[i].number1) - Number(lote[i].number2);
-                        break;
-                    case 'multiplicacion':
-                        result = Number(lote[i].number1) * Number(lote[i].number2);
-                        break;
-                    case 'divicion':
-                        result = Number(lote[i].number1) / Number(lote[i].number2);
-                        break;
-                    case 'residuo':
-                        result = Number(lote[i].number1) % Number(lote[i].number2);
-                        break;
-                    case 'potencia':
-                        result = Math.pow(Number(lote[i].number1), Number(lote[i].number2));
-                        break;
-                }
-
-                // Esperar el tiempo de ejecución
-                await new Promise(resolve => {
-                    setTimeout(() => {
-                        idSpan.textContent = lote[i].identificator;
-                        nameSpan.textContent = lote[i].name;
-                        num1Span.textContent = lote[i].number1;
-                        num2Span.textContent = lote[i].number2;
-                        oprSpan.textContent = lote[i].operation;
-                        timSpan.textContent = lote[i].seconds;
-                        resSpan.textContent = result;
-
-                        resolve();
-                    }, Number(lote[i].seconds) * 1000);
-                });
-
-                // Actualizar número de lotes restantes
-                if (i === lote.length - 1) {
-                    remainingLotesSpan.textContent = Number(remainingLotesSpan.textContent) - 1;
-                }
-
-                // Actualizar número de procesos restantes si es el último proceso
-                if (Number(remainingProcessesSapn.textContent) === 0) {
-                    remainingLotesSpan.textContent = 0;
-                }
+// Valida el id
+const validatorId = (data) => {
+    // Validar id unico por lote
+    if (lote.length) {
+        lote.forEach((element) => {
+            if (data.target.identificator.value === element.identificator) {
+                const error = document.createElement('P');
+                error.textContent = `Id ${element.identificator} ya fue utilizado`;
+                error.classList.add('error-validation');
+                loteSpan.appendChild(error);
+                setTimeout(() => {
+                    error.remove();
+                }, 3000);
+                throw new Error('Id repetido');
             }
-        }
-    } else {
-        // Solo generó un lote
-        executeOperations();
+        })
     }
-};
 
-async function executeOperations() {
-    for (let i = 0; i < lote.length; i++) {
-        let result;
-
-        // Actualizar procesos restantes
-        remainingProcessesSapn.textContent = lote.length - i;
-
-        // Actualizar proceso actual
-        currentProcessSpan.textContent = i + 1;
-
-        switch (lote[i].operation) {
-            case 'suma':
-                result = Number(lote[i].number1) + Number(lote[i].number2);
-                break;
-            case 'resta':
-                result = Number(lote[i].number1) - Number(lote[i].number2);
-                break;
-            case 'multiplicacion':
-                result = Number(lote[i].number1) * Number(lote[i].number2);
-                break;
-            case 'divicion':
-                result = Number(lote[i].number1) / Number(lote[i].number2);
-                break;
-            case 'residuo':
-                result = Number(lote[i].number1) % Number(lote[i].number2);
-                break;
-            case 'potencia':
-                result = Math.pow(Number(lote[i].number1), Number(lote[i].number2));
-                break;
-        }
-
-        // Esperar el tiempo de ejecución
-        await new Promise(resolve => {
-            setTimeout(() => {
-                idSpan.textContent = lote[i].identificator;
-                nameSpan.textContent = lote[i].name;
-                num1Span.textContent = lote[i].number1;
-                num2Span.textContent = lote[i].number2;
-                oprSpan.textContent = lote[i].operation;
-                timSpan.textContent = lote[i].seconds;
-                resSpan.textContent = result;
-                resolve();
-            }, Number(lote[i].seconds) * 1000);
+    // Validar id unico por contenedor de lotes
+    if (totalLotes.length) {
+        totalLotes.forEach((loteElement) => {
+            loteElement.forEach((procesoElement) => {
+                if (data.target.identificator.value === procesoElement.identificator) {
+                    const error = document.createElement('p');
+                    error.textContent = `El ID ${procesoElement.identificator} ya fue utilizado en otro lote`;
+                    error.classList.add('error-validation');
+                    loteSpan.appendChild(error);
+                    setTimeout(() => {
+                        error.remove();
+                    }, 3000);
+                    throw new Error('ID repetido en totalLotes');
+                }
+            });
         });
     }
+}
+
+// Mostramos resultados
+const resolveProcess = async () => {
+    for (const lote of totalLotes) {
+
+        for (let i = 0; i < lote.length; i++) {
+            let result;
+            // Proceso actual
+            currentProcess = currentProcess + 1
+
+            // Proceso actual 
+            currentProcessesSpan.textContent = currentProcess;
+
+            // Mostramos proceso actual
+            updateCurrentInExecution(lote[i].name, lote[i].number1, lote[i].number2, lote[i].operation, lote[i].seconds);
+
+            switch (lote[i].operation) {
+                case 'suma':
+                    result = Number(lote[i].number1) + Number(lote[i].number2);
+                    break;
+
+                case 'resta':
+                    result = Number(lote[i].number1) - Number(lote[i].number2);
+                    break;
+
+                case 'multiplicacion':
+                    result = Number(lote[i].number1) * Number(lote[i].number2);
+                    break;
+
+                case 'divicion':
+                    result = Number(lote[i].number1) / Number(lote[i].number2);
+                    break;
+
+                case 'residuo':
+                    result = Number(lote[i].number1) % Number(lote[i].number2);
+                    break;
+
+                case 'potencia':
+                    result = Math.pow(Number(lote[i].number1), Number(lote[i].number2));
+                    break;
+            }
+
+            await new Promise(resolve => {
+                setTimeout(() => {
+                                    // Después de ejecutar un lote
+                if (currentLote < totalLotes.length - 1) {
+                    currentLote++; // Avanzar al siguiente lote
+                    lotesInExecution(totalLotes[currentLote]); // Mostrar el próximo lote en ejecución
+                    currentLoteSpan.textContent = currentLote + 1; // Actualizar el número del lote actual en la interfaz
+                } else {
+                    // Si no hay más lotes en espera, puedes realizar alguna acción adicional, como detener el programa.
+                    clearInterval(intervalId); // Detener el contador general
+                    console.log('Todos los lotes han sido procesados.'); // Mensaje de finalización
+                }
+
+                // Después de ejecutar todos los lotes
+                if (currentLote === totalLotes.length - 1 && processCounter === 0) {
+                    clearInterval(intervalId); // Detener el contador general
+                    // Puedes agregar acciones adicionales aquí, como mostrar un mensaje de finalización o reiniciar el programa.
+                }
+
+                    // Lote
+                    const newLoteH4 = document.createElement('h4');
+                    newLoteH4.classList.add('col-sm-12', 'col-lg-12');
+                    newLoteH4.textContent = `Lote ${currentLote + 1}`;
+
+                    // Proceso
+                    const newProcessH4 = document.createElement('h4');
+                    newProcessH4.classList.add('col-sm-12', 'col-lg-12');
+                    newProcessH4.textContent = 'Proceso ' + currentProcess;
+
+                    // Id
+                    const newDivId = document.createElement('div');
+                    newDivId.classList.add('col-sm-12', 'col-lg-12');
+                    newDivId.textContent = "Id: " + lote[i].identificator;
+
+                    // Name
+                    const newDivName = document.createElement('div');
+                    newDivName.classList.add('col-sm-12', 'col-lg-12');
+                    newDivName.textContent = "Name: " + lote[i].name;
+
+                    // Num1
+                    const newDivNum1 = document.createElement('div');
+                    newDivNum1.classList.add('col-sm-12', 'col-lg-12');
+                    newDivNum1.textContent = "Numero 1: " + lote[i].number1;
+
+                    // Num2
+                    const newDivNum2 = document.createElement('div');
+                    newDivNum2.classList.add('col-sm-12', 'col-lg-12');
+                    newDivNum2.textContent = "Numero 2: " + lote[i].number2;
+
+                    // Operation
+                    const newOperation = document.createElement('div');
+                    newOperation.classList.add('col-sm-12', 'col-lg-12');
+                    newOperation.textContent = "Operacion: " + lote[i].operation;
+
+                    // Seconds
+                    const newSeconds = document.createElement('div');
+                    newSeconds.classList.add('col-sm-12', 'col-lg-12');
+                    newSeconds.textContent = "Tiempo de espera: " + lote[i].seconds;
+
+                    // Result 
+                    const newResult = document.createElement('div');
+                    newResult.classList.add('col-sm-12', 'col-lg-12');
+                    newResult.textContent = "Resultado: " + result;
+
+                    // Container
+                    const newProcessDiv = document.createElement('div');
+                    newProcessDiv.classList.add('form-group', 'row', 'resultados');
+                    newProcessDiv.appendChild(newLoteH4);
+                    newProcessDiv.appendChild(newProcessH4);
+                    newProcessDiv.appendChild(newDivId);
+                    newProcessDiv.appendChild(newDivNum1);
+                    newProcessDiv.appendChild(newDivNum2);
+                    newProcessDiv.appendChild(newOperation);
+                    newProcessDiv.appendChild(newSeconds);
+                    newProcessDiv.appendChild(newResult);
+
+                    // Divisor visual
+                    const hr = document.createElement('hr');
+
+                    divResolucion.insertAdjacentElement('afterend', newProcessDiv);
+                    divResolucion.insertAdjacentElement('afterend', hr);
+
+                    processCounter = 0;
+                    resolve();
+                }, Number(lote[i].seconds) * 1000);
+            });
+
+            // Procesos restantes - 1
+            remainingProcessesSapn.textContent = Number(remainingProcessesSapn.textContent) - 1;
+
+            // Cambiamos de Procesos Actual
+
+            // Nuevo lote?
+            if (i === 3) {
+                // Restamos del contador de lotes
+                remainingLotesSpan.textContent = Number(remainingLotesSpan.textContent) - 1;
+
+                // Añadimos sumamos un lote al lote actual
+                currentLote = currentLote + 1;
+
+                // Mostramos lote actual +1
+                currentLoteSpan.textContent = currentLote + 1;
+
+                // Cambiamos datos de los lotes en execution
+                lotesInExecution(totalLotes[currentLote]);
+            }
+
+            if (Number(remainingProcessesSapn.textContent) == 0) {
+                remainingLotesSpan.textContent = 0;
+                clearInterval(intervalId);
+            }
+            // Después de ejecutar todos los lotes
+            if (currentLote === totalLotes.length - 1 && processCounter === 0) {
+                clearInterval(intervalId); // Detener el contador general
+                // Puedes agregar acciones adicionales aquí, como mostrar un mensaje de finalización o reiniciar el programa.
+            }
+
+        }
+    }
+
+}
+
+// Función para actualizar la interfaz de usuario con los datos del proceso en ejecución actual
+function updateCurrentInExecution(name, number1, number2, operation, seconds, result, showError) {
+    const nameElement = document.querySelector('.current-process .name span');
+    const number1Element = document.querySelector('.current-process .n1 span');
+    const number2Element = document.querySelector('.current-process .n2 span');
+    const operationElement = document.querySelector('.current-process .opt span');
+    const secondsElement = document.querySelector('.current-process .tm span');
+    const resultElement = document.querySelector('.current-process .tt span');
     
-    // Actualizar procesos en 0
-    remainingProcessesSapn.textContent = 0;
-    // Actualizar lotes en 0
-    remainingLotesSpan.textContent = 0;
+    // Actualizar los elementos de la interfaz de usuario con los datos del proceso actual
+    nameElement.textContent = name;
+    number1Element.textContent = number1;
+    number2Element.textContent = number2;
+    operationElement.textContent = operation;
+    secondsElement.textContent = seconds;
+    
+    // Mostrar el resultado o el mensaje de error, según corresponda
+    if (showError) {
+        resultElement.textContent = "ERROR";
+    } else {
+        resultElement.textContent = result;
+    }
 }
 
 
-// Actualizar Contador Tiempo
-const updateCounter = () => {
-    var hour = moment().format('LTS');
-    clock.textContent = hour;
+const incrementarContador = () => {
+    generalCounter = generalCounter + 1;
+    contadorElemento.textContent = generalCounter;
 }
 
+let intervalId; // Variable para almacenar el ID del intervalo
 
-// Muetra total de procesos
-const showTotalProcess = (total) => {
-    totalProcessesSpan.textContent = total;
+const incrementarContadorP = () => {
+    processCounter = processCounter + 1;
+    ttSpan.textContent = processCounter;
+}
+
+const lotesInExecution = (lote) => {
+    if (typeof(lote) === 'undefined') {
+        return;
+    }
+        primerSpanProceso1.textContent = lote[0]?.identificator || '';
+        segundoSpanProceso1.textContent = lote[0]?.seconds || '';
+        tercerSpanProceso1.textContent = lote[0]?.operation || '';
+
+        primerSpanProceso2.textContent = lote[1]?.identificator || '';
+        segundoSpanProceso2.textContent = lote[1]?.seconds;
+        tercerSpanProceso2.textContent = lote[1]?.operation;
+
+        primerSpanProceso3.textContent = lote[2]?.identificator || '';
+        segundoSpanProceso3.textContent = lote[2]?.seconds || '';
+        tercerSpanProceso3.textContent = lote[2]?.operation || '';
+
+        primerSpanProceso4.textContent = lote[3]?.identificator || '';
+        segundoSpanProceso4.textContent = lote[3]?.seconds || '';
+        tercerSpanProceso4.textContent = lote[3]?.operation || '';
 }
