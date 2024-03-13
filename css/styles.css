@@ -84,3 +84,13 @@ body {
 .contador{
   background-color: #000000;
 }
+
+.component{
+  font-weight: bold;
+  font-size: 17px;
+  font-style: italic;
+}
+
+.altura-2rem {
+  height: 2rem;
+}
