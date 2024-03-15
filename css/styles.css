@@ -94,3 +94,40 @@ body {
 .altura-2rem {
   height: 2rem;
 }
+
+.modal {
+  display: none; /* Por defecto oculto */
+  position: fixed; /* Fijar la posición */
+  z-index: 1; /* Posición en la pila */
+  left: 0;
+  top: 0;
+  width: 100%; /* Tamaño completo */
+  height: 100%; /* Tamaño completo */
+  overflow: auto; /* Desbordamiento si es necesario */
+  background-color: rgb(0,0,0); /* Fondo negro */
+  background-color: rgba(0,0,0,0.4); /* Fondo negro con transparencia */
+}
+
+.modal-content {
+  background-color: #fefefe; /* Fondo blanco */
+  margin: 15% auto; /* Margen superior e inferior y centrado horizontal */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Ancho del contenido */
+  max-height: 80%; /* Altura máxima del contenido */
+  overflow-y: auto; /* Desbordamiento vertical si es necesario */
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}

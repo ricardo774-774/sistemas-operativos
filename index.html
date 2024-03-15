@@ -15,6 +15,19 @@
 
     <h1 class="text-center my-5 titulo">Algoritmo de planificación FCFS</h1>
 
+    <!-- Botón para mostrar todos los procesos -->
+    <button onclick="seeAllProcesses()">Ver todos los procesos</button>
+
+    <!-- Modal para mostrar los procesos -->
+    <div id="modal" class="modal">
+    <div class="modal-content">
+        <!-- Botón de cierre -->
+        <span class="close">&times;</span>
+        <!-- Contenedor de procesos -->
+        <div id="process-container"></div>
+    </div>
+    </div>
+
     <h1 id="contador" class="contador-container">0</h1>
 
     <div class="container mt-5 p-5" id="main-container">
