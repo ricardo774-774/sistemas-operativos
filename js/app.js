@@ -5,12 +5,13 @@ let globalCounter = 0;
 
 // Execution Counter
 let executionCounter = 0;
+let executionInterval = 0;
 
 // Ready counter
 let readyCounter = 0;
 
-// Watting counter
-let wattingCounter = 0;
+// Waiting counter
+let waitingCounter = 0;
 
 // Components of process
 let id;
@@ -22,11 +23,11 @@ let num2;
 let result;
 
 let arrivalTime; // Hora en la que el proceso entra al sistema.
-let completionTime; // Hora en la que el proceso termino.
+let completionTime; // Hora en la que el proceso terminó.
 let returnTime; // Tiempo total desde que el proceso llega hasta que termina.
 let responseTime; // Tiempo transcurrido desde que llega hasta que es atendido por primera vez.
 let waitTime; // Tiempo que el proceso ha estado esperando para usar el procesador.
-let serviceTime; // EstimatedTime. (Si el proceso termino su ejecución normal es el TME)
+let serviceTime; // EstimatedTime. (Si el proceso terminó su ejecución normal es el TME)
 
 // Types of stages
 let stageI = [
@@ -37,17 +38,17 @@ let stageI = [
     "terminado"
 ];
 
-// Types of opt
+// Types of operations
 let operationI = [
     "suma",
     "resta",
     "multiplicacion",
-    "divicion",
+    "division",
     "residuo",
     "potencia",
 ];
 
-// Processs
+// Process
 let process = {
     id,
     stage,
@@ -64,93 +65,79 @@ let process = {
     serviceTime,
 };
 
-// Total of process
-let countNewProcesess = 0;
+// Total of processes
+let countNewProcesses = 0;
 
-// List of process
-let listNewPross = [];
+// List of processes
+let listAllProcesses = [];
 
-// ****************  Elements **************** //
-
+// **************** Elements **************** //
 
 // Form
 let quantityForm = document.getElementById('quantity'); 
 let buttonForm = document.getElementById('button-quantity');
 
-// Counter of new process
+// Counter of new processes
 let newProcessSpan = document.querySelector('#title-1 span');
 
-// Process Listos Span
+// Ready Processes Span
 let divListo = document.querySelectorAll('.listos span:nth-child(1)');
 
-// Process Ejecución Span
+// Processes in Execution Span
 let divExecution = document.querySelectorAll('.ejecucion span:nth-child(1)');
 
-// Process Bloqueados Span
+// Blocked Processes Span
 let divBloqueados = document.querySelectorAll('.bloqueados span:nth-child(1)');
 
-// Porcess Terminados Span
+// Finished Processes Container
 let contenedor = document.getElementById("terminado");
 
 // **************** Events **************** //
-
-
-
 
 // DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function () {
     setInterval(incrementarContador, 1000);
 });
 
-
 // Submit form 
 quantityForm.addEventListener('submit', function (e) {
     // Prevent default
     e.preventDefault();
 
-    // Gettin total of process
+    // Get total number of processes
     const formData = new FormData(e.target);
-    countNewProcesess = formData.get('quantity');
+    countNewProcesses = formData.get('quantity');
 
-    // Update counter of new process
-    newProcessSpan.textContent = countNewProcesess;
+    // Update counter of new processes
+    newProcessSpan.textContent = countNewProcesses;
 
-    // Add data to any process
-    addDataToProcess(countNewProcesess); 
+    // Add data to each process
+    addDataToProcesses(countNewProcesses); 
 
-    // Inativate button of form
+    // Deactivate form button
     buttonForm.disabled = true;
 });
 
-
-// Obtener el elemento del contador
+// Get the counter element
 var contadorElemento = document.getElementById('contador');
 
+// **************** Functions **************** //
 
+// Save data of processes and container of processes
+const addDataToProcesses = (countNewProcesses) => {
 
-
-
-// **************** Funtions ****************
-
-
-
-
-
-// Guardamos los datos el lotes y contenedor de lotes 
-const addDataToProcess = (countNewProcesess) => {
-
-    for (let i = 0; i < countNewProcesess; i++) {
+    for (let i = 0; i < countNewProcesses; i++) {
 
         // Get numbers
         let {number1, number2} = getNumbers();
 
-        // Get opt
+        // Get operation
         let operation = getOperation();
 
         // Get estimated time
         let estimated = getEstimatedTime();
 
-        // Get time 
+        // Get current time 
         let time = getCurrentTime();
 
         process = {
@@ -158,29 +145,31 @@ const addDataToProcess = (countNewProcesess) => {
             num1: number1,
             num2: number2,
             operation,
-            estimatedTime: estimated,
+            // estimatedTime: estimated,
+            estimatedTime: 5,
             arrivalTime: time,
+            stage: 'nuevo'
         };
 
-        listNewPross[i] = process;
-
+        listAllProcesses[i] = process;
     }
 
-    controllProcessMemory(listNewPross);
+    controllProcessMemory(listAllProcesses);
     
 }
 
+// First initialization
+const controllProcessMemory = (listAllProcesses = []) => {
+    showInExecution(listAllProcesses[0]);
+    showListos(listAllProcesses[1]);
 
-const controllProcessMemory = (listNewPross = []) => {
-
-    showInExecution(listNewPross[0]);
-    showListos(listNewPross[1]);
-
+    // Update counter
+    updateNewProcessCount();
+    updateNewProcessCount();
 }
 
-
 // Resolve the operation
-const revolveOpt = (process) => {
+const resolveOperation = (process) => {
 
     let {num1, num2, operation} = process;
 
@@ -197,7 +186,7 @@ const revolveOpt = (process) => {
             process.result = Number(num1) * Number(num2);
             break;
 
-        case 'divicion':
+        case 'division':
             process.result = Number(num1) / Number(num2);
             break;
 
@@ -211,92 +200,117 @@ const revolveOpt = (process) => {
     }
 };
 
-
-
-// Get time of wait fot user process
+// Get time waited for user process
 const timeForUseProcess = (process) => {
 
     const horaEnSegundos = (hora) => {
-        // Dividir la hora en horas, minutos y segundos
-        let partesHora = hora.split(':');
+        // Divide the time into hours, minutes, and seconds
+        let parts = hora.split(':');
     
-        // Convertir las horas, minutos y segundos a segundos
-        let horasEnSegundos = parseInt(partesHora[0]) * 3600; // 1 hora = 3600 segundos
-        let minutosEnSegundos = parseInt(partesHora[1]) * 60; // 1 minuto = 60 segundos
-        let segundos = parseInt(partesHora[2]);
+        // Convert hours, minutes, and seconds to seconds
+        let hoursInSeconds = parseInt(parts[0]) * 3600; // 1 hour = 3600 seconds
+        let minutesInSeconds = parseInt(parts[1]) * 60; // 1 minute = 60 seconds
+        let seconds = parseInt(parts[2]);
     
-        // Calcular el total de segundos
-        let totalSegundos = horasEnSegundos + minutosEnSegundos + segundos;
+        // Calculate total seconds
+        let totalSeconds = hoursInSeconds + minutesInSeconds + seconds;
     
-        return totalSegundos;
+        return totalSeconds;
     }
 
-    let segundosHora1 = horaEnSegundos(process.arrivalTime);
-    let segundosHora2 = horaEnSegundos(getCurrentTime());
+    let secondsTime1 = horaEnSegundos(process.arrivalTime);
+    let secondsTime2 = horaEnSegundos(getCurrentTime());
 
-    let diferencia = Math.abs(segundosHora1 - segundosHora2);
+    let difference = Math.abs(secondsTime1 - secondsTime2);
     
-    return diferencia;
+    return difference;
+}
+
+// Get time from start to finish
+const timeOfInitToFinish = (process) => {
+
+    const horaEnSegundos = (hora) => {
+        // Divide the time into hours, minutes, and seconds
+        let parts = hora.split(':');
+    
+        // Convert hours, minutes, and seconds to seconds
+        let hoursInSeconds = parseInt(parts[0]) * 3600; // 1 hour = 3600 seconds
+        let minutesInSeconds = parseInt(parts[1]) * 60; // 1 minute = 60 seconds
+        let seconds = parseInt(parts[2]);
+    
+        // Calculate total seconds
+        let totalSeconds = hoursInSeconds + minutesInSeconds + seconds;
+    
+        return totalSeconds;
+    }
+
+    let secondsTime1 = horaEnSegundos(process.arrivalTime);
+    let secondsTime2 = horaEnSegundos(getCurrentTime());
+
+    let difference = Math.abs(secondsTime1 - secondsTime2);
+    
+    return difference;
 }
 
 const showFinished = (process) => {
 
-    let arrivalTime; // Hora en la que el proceso entra al sistema.
-    let completionTime; // Hora en la que el proceso termino.
     let returnTime; // Tiempo total desde que el proceso llega hasta que termina.
     let responseTime; // Tiempo transcurrido desde que llega hasta que es atendido por primera vez.
-    let waitTime; // Tiempo que el proceso ha estado esperando para usar el procesador.
     
+    // New stage of process
+    process.stage = 'terminado';
     
-        // Calculate time data of finished
-        process.completionTime = getCurrentTime();
-    
-    
-        // If not bloqued add normal service time
-        if (!process.serviceTime) {
-            process.serviceTime = process.estimatedTime;
-        } else {
-            // Add time in block
-            process.serviceTime = process.estimatedTime + 10;
-        }
-    
-    
-        // Ordenate order of process
-        process = {
-            id: process.id,
-            num1: process.num1,
-            num2: process.num2,
-            operation: process.operation,
-            result: process.result,
-            arrivalTime: process.arrivalTime,
-            completionTime: process.completionTime,
-            estimatedTime: process.estimatedTime,
-            serviceTime: process.serviceTime,
-            waitTime: process.waitTime,
-        }
-    
-    
-        for (let propiedad in process) {
-            if (process.hasOwnProperty(propiedad)) {
-                let parrafo = document.createElement("div");
-                parrafo.classList.add('col-sm-3', 'col-lg-12', 'text-center');
-                parrafo.textContent = `${propiedad}: ${process[propiedad]}`;
-                contenedor.appendChild(parrafo);
-            }
-        }
-        let saltoDeLinea = document.createElement("hr");
-        saltoDeLinea.classList.add('altura-2rem');
-        contenedor.appendChild(saltoDeLinea);
-}
+    // Calculate time data of finished
+    process.completionTime = getCurrentTime();
 
+    // Calculate time from start to finish of process
+    process.returnTime = timeOfInitToFinish(process);
+
+    // If not blocked, add normal service time
+    if (!process.serviceTime) {
+        process.serviceTime = process.estimatedTime;
+    } else {
+        // Add time in block
+        process.serviceTime = process.estimatedTime + process.estimatedTime;
+    }
+
+    // Order of process
+    process = {
+        id: process.id,
+        num1: process.num1,
+        num2: process.num2,
+        operation: process.operation,
+        result: process.result,
+        arrivalTime: process.arrivalTime,
+        completionTime: process.completionTime,
+        estimatedTime: process.estimatedTime,
+        serviceTime: process.serviceTime,
+        waitTime: process.waitTime,
+        returnTime: process.returnTime
+    }
+    
+    // Show to user
+    for (let property in process) {
+        if (process.hasOwnProperty(property)) {
+            let div = document.createElement("div");
+            div.classList.add('col-sm-3', 'col-lg-12', 'text-center');
+            div.textContent = `${property}: ${process[property]}`;
+            contenedor.appendChild(div);
+        }
+    }
+    let hr = document.createElement("hr");
+    hr.classList.add('altura-2rem');
+    contenedor.appendChild(hr);
+}
 
 const showListos = (process) => {
 
+    process.stage = 'listo';
+
+    divListo[0].textContent = process?.id || '';
+    divListo[1].textContent = process?.estimatedTime || '';
+
     let counter;
-
-    divListo[0].textContent = process.id;
-    divListo[1].textContent = process.estimatedTime;
-
     counter = Number(divExecution[5].textContent);
 
     let interval = setInterval(() => {
@@ -306,17 +320,17 @@ const showListos = (process) => {
         if (counter == 0) {
             clearInterval(interval);
 
+            // Show list of new processes
+            updateNewProcessCount();
+
             divListo[0].textContent = "";
             divListo[1].textContent = "";
             divListo[2].textContent = "";
 
-            // Is process bloqued?
-            if (condition) {
-                
-            }
+            process.stage = 'ejecucion';
 
             // Call new process in execution
-            let { isReady, processReady } = getProcessReady(process.id);
+            let { isReady, processReady } = getNextProcessReady();
             if (isReady == true) {
                 showListos(processReady);
             }
@@ -326,36 +340,41 @@ const showListos = (process) => {
 
 }
 
-
 const showInExecution = (process) => {
 
+    // Change stage
+    process.stage = 'ejecucion';
+
+    // Counter = 0
     executionCounter = 0;
 
-    let executionInterval = setInterval(counterExecution, 1000);
+    // Start interval
+    executionInterval = setInterval(counterExecution, 1000);
 
-    divExecution[0].textContent = process.id;
-    divExecution[1].textContent = process.operation;
-    divExecution[2].textContent = process.num1;
-    divExecution[3].textContent = process.num2;
-    divExecution[5].textContent = process.estimatedTime;
+    // Show data
+    divExecution[0].textContent = process?.id || '';
+    divExecution[1].textContent = process?.operation || '';
+    divExecution[2].textContent = process?.num1 || '';
+    divExecution[3].textContent = process?.num2 || '';
+    divExecution[5].textContent = process?.estimatedTime || '';
 
-    revolveOpt(process);
+    // Resolve math operation 
+    resolveOperation(process);
 
-    // Time for use process 
+    // Time assigned for process use
     process.waitTime = timeForUseProcess(process);
 
+
+    // When finish time
     setTimeout( () => {
 
         // Pass to finished process
         showFinished(process);
 
-        // Reduce list of new process
-        updateNewProcessCount();
-
         // Stop execution counter
         clearInterval(executionInterval);
 
-        // Clean execution
+        // Clear data showed
         divExecution[0].textContent = '';
         divExecution[1].textContent = '';
         divExecution[2].textContent = '';
@@ -364,9 +383,9 @@ const showInExecution = (process) => {
         divExecution[5].textContent = '';
 
         // Call new process in execution
-        let { isReady, processReady } = getProcessReady(process.id);
-        if (isReady == true) {
-            showInExecution(processReady);
+        let { isExe, processExe } = getNextProcessInExe();
+        if (isExe == true) {
+            showInExecution(processExe);
         }
 
 
@@ -374,30 +393,27 @@ const showInExecution = (process) => {
 
 }
 
-const showBloqued = (process) => {
+const getNextProcessReady = () => {
+    let data = listAllProcesses
+        .filter(process => process.stage === 'nuevo')
+        .map(process => ({ isReady: true, processReady: process }));
 
+    return (data[0])
+        ? data[0]
+        : { isExe: false, processReady: {} }
 }
 
-const getProcessReady = (i) => {
-
-    if (i < listNewPross.length) {
-        return { 
-            isReady: true,
-            processReady: listNewPross[i]
-        };
-    } else {
-        return { 
-            isReady: false,
-            processReady: listNewPross[i]
-        };
-    }
+const getNextProcessInExe = () => {
+    let data = listAllProcesses
+        .filter(process => process.stage === 'listo')
+        .map(process => ({ isExe: true, processExe: process }));
     
+    return (data[0])
+        ? data[0]
+        : { isExe: false, processExe: {} }
 }
 
-
-////////// Keydown funtions
-
-
+// Keydown functions
 const manejarTecla = (event) =>  {
     switch(event.key) {
         case 'i':
@@ -420,32 +436,44 @@ const manejarTecla = (event) =>  {
 }
 
 const moveProcessToBlocked = () => {
-
-    let counter = 10;
-
+    // Show data bloqued
     divBloqueados[0].textContent =  divExecution[0].textContent;
     divBloqueados[1].textContent =  10;
+
+    let counter = 10; // Counter
+    let position = divBloqueados[0].textContent;
+
+    // Change stage
+    listAllProcesses[position - 1].stage = 'nuevo';
+
+    // Add blocked to the end
+    listAllProcesses.push(listAllProcesses[position - 1]);
+
+    // Remove blocked process from the list 
+    listAllProcesses.splice(position - 1 ,1);
+
+    // Add 1 to counter new process
+    updateNewProcessCountUpper();
+
+    clearInterval(executionInterval);
+
+    showInExecution(listAllProcesses[position - 1]);
+    showListos(listAllProcesses[position - 2]);
+
+    // listAllProcesses.forEach((process) => {
+    //     console.log(process.id, process.stage);
+    // });
 
     let interval = setInterval(() => {
         counter = counter - 1;
         divBloqueados[1].textContent = counter;
 
         if (counter == 0) {
+            // listAllProcesses[position - 1].stage = 'nuevo';
             clearInterval(interval);
-
-            divBloqueados[0].textContent = "";
-            divBloqueados[1].textContent = "";
-            
-            // Move to ready
-            
-
         }
 
     }, 1000 );
-
-    setTimeout(() => {
-
-    }, 10 * 1000 );
 }
 
 
@@ -457,43 +485,46 @@ const continueProgram = () => {
     
 }
 
-
 ////////// Update new process span
 
-// Update counter of new porcess
+// Update counter of new processes
 const updateNewProcessCount = () => {
-    countNewProcesess = countNewProcesess - 1;
-    newProcessSpan.textContent = countNewProcesess
+    countNewProcesses = countNewProcesses - 1;
+
+    if (countNewProcesses >= 0) {
+        newProcessSpan.textContent = countNewProcesses   
+    }
 }
 
-
+const updateNewProcessCountUpper = () => {
+    countNewProcesses = countNewProcesses + 1;
+    newProcessSpan.textContent = countNewProcesses   
+}
 
 ////////// Get time
 
-// Get current time (ej: 10:30:20)
+// Get current time (e.g., 10:30:20)
 const getCurrentTime = () => {
-    // Obtener la hora actual
-    let fecha = new Date();
+    // Get current time
+    let date = new Date();
 
-    // Obtener las horas, minutos y segundos
-    let horas = fecha.getHours();
-    let minutos = fecha.getMinutes();
-    let segundos = fecha.getSeconds();
+    // Get hours, minutes, and seconds
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let seconds = date.getSeconds();
 
-    // Convertir horas al formato de 12 horas
-    horas = horas % 12 || 12; // Si es 0, entonces es 12
+    // Convert hours to 12-hour format
+    hours = hours % 12 || 12; // If it's 0, then it's 12
 
-    // Agregar un cero inicial a los minutos y segundos si son menores a 10
-    minutos = minutos < 10 ? '0' + minutos : minutos;
-    segundos = segundos < 10 ? '0' + segundos : segundos;
+    // Add leading zero to minutes and seconds if they are less than 10
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    seconds = seconds < 10 ? '0' + seconds : seconds;
 
-    // Construir la cadena de tiempo
-    let horaActual = horas + ':' + minutos + ':' + segundos;
+    // Construct time string
+    let currentTime = hours + ':' + minutes + ':' + seconds;
 
-    return horaActual;
+    return currentTime;
 }
-
-
 
 ////////// Counters
 
@@ -507,9 +538,9 @@ const counterReady = () => {
     divListo[2].textContent = readyCounter;
 }
 
-const conterWatting = () => {
-    wattingCounter = wattingCounter + 1;
-    divBloqueados[1].textContent = wattingCounter;
+const counterWaiting = () => {
+    waitingCounter = waitingCounter + 1;
+    divBloqueados[1].textContent = waitingCounter;
 }
 
 // Update global counter
@@ -518,18 +549,16 @@ const incrementarContador = () => {
     contadorElemento.textContent = globalCounter;
 }
 
-
-
 ////////// Random data
 
-// Get random number behind 1-10
+// Get random number between 1 and 10
 const getNumbers = () => {
     let number1 = Math.floor(Math.random() * 10) + 1;
     let number2 = Math.floor(Math.random() * 10) + 1;
     return { number1, number2 };
 }
 
-// Get random number behind 7-18
+// Get random number between 7 and 18
 const getEstimatedTime = () => {
     return Math.floor(Math.random() * (18 - 7 + 1)) + 7;
 }
@@ -541,9 +570,7 @@ const getOperation = () => {
     return randomOperation;
 }
 
-
-
 ////////// K Keydown listener
 
-// Escuchar eventos de teclado
+// Listen for keyboard events
 document.addEventListener('keydown', manejarTecla);
